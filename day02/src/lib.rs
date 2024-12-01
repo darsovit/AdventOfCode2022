@@ -13,38 +13,36 @@ enum WinLossDraw {
 }
 
 pub struct Day02 {
-    rounds: Vec<(Rps, Rps)>,
+    rounds: Vec<(char, char)>,
 }
 
 impl Day02 {
 
-    
-    fn translate_opponent(value: Option<char>) -> Rps {
+    fn translate_opponent(value: char) -> Rps {
         match value {
-            Some('A') => Rps::Rock,
-            Some('B') => Rps::Paper,
-            Some('C') => Rps::Scissors,
-            Some(value) => {panic!("Invalid opponent move: {}", value); }
-            None => {panic!("Opponent move not found"); }
+            'A' => Rps::Rock,
+            'B' => Rps::Paper,
+            'C' => Rps::Scissors,
+            _ => {panic!("Invalid opponent move: {}", value); }
         }
     }
 
-    fn translate_move(value: Option<char>) -> Rps {
+    fn translate_our_move(value: char) -> Rps {
         match value {
-            Some('X') => Rps::Rock,
-            Some('Y') => Rps::Paper,
-            Some('Z') => Rps::Scissors,
-            Some(value) => { panic!("Invalid choice: {}", value); }
-            None => { panic!("Choice not found"); }
+            'X' => Rps::Rock,
+            'Y' => Rps::Paper,
+            'Z' => Rps::Scissors,
+            _ => { panic!("Invalid choice: {}", value); }
         }
     }
+
     pub fn new(lines: std::str::Lines<'_>) -> Self {
-        let mut vec = Vec::<(Rps, Rps)>::new();
+        let mut vec = Vec::<(char, char)>::new();
         for line in lines {
             let mut iter = line.chars();
-            let opponent = Self::translate_opponent(iter.next());
+            let opponent = if let Some(value) = iter.next() { value } else { panic!("Failed to parse line {line}"); };
             iter.next();
-            let play = Self::translate_move(iter.next());
+            let play = if let Some(value) = iter.next() { value } else { panic!("Failed to parse line {line}"); };
             vec.push((opponent, play));            
         }
         Day02{rounds: vec}
@@ -53,7 +51,9 @@ impl Day02 {
     pub fn part1(&self) -> u32 {
         let mut sum_of_rounds = 0;
         for round in &self.rounds {
-            sum_of_rounds += Self::evaluate_round(round.0, round.1);
+            let opponent = Self::translate_opponent(round.0);
+            let our_move = Self::translate_our_move(round.1);
+            sum_of_rounds += Self::evaluate_round(opponent, our_move);
         }
         sum_of_rounds
     }
