@@ -58,6 +58,7 @@ impl Day02 {
         sum_of_rounds
     }
 
+
     fn determine_score(play: Rps, outcome: WinLossDraw) -> u32 {
         let play_score = match play {
             Rps::Rock => 1,
@@ -89,6 +90,39 @@ impl Day02 {
         Self::determine_score(play, Self::determine_outcome(opponent, play))
     }
 
+    fn pt2_translate_outcome(value: char) -> WinLossDraw {
+        match value {
+            'X' => WinLossDraw::Loss,
+            'Y' => WinLossDraw::Draw,
+            'Z' => WinLossDraw::Win,
+            _ => { panic!("Unexpected value in translate_outcome: {value}"); }
+        }
+    }
+
+    fn determine_our_play(opponent: Rps, outcome: WinLossDraw) -> Rps {
+        match (opponent, outcome) {
+            (Rps::Rock, WinLossDraw::Win) => Rps::Paper,
+            (Rps::Rock, WinLossDraw::Loss) => Rps::Scissors,
+            (Rps::Paper, WinLossDraw::Win) => Rps::Scissors,
+            (Rps::Paper, WinLossDraw::Loss) => Rps::Rock,
+            (Rps::Scissors, WinLossDraw::Win) => Rps::Rock,
+            (Rps::Scissors, WinLossDraw::Loss) => Rps::Paper,
+            (_, WinLossDraw::Draw) => opponent,
+        }
+    }
+
+    fn pt2_evaluate_round(opponent: Rps, outcome: WinLossDraw) -> u32 {
+        Self::determine_score(Self::determine_our_play(opponent, outcome), outcome)
+    }
+
+    pub fn part2(&self) -> u32 {
+        let mut sum_of_rounds = 0;
+        for round in &self.rounds {
+            let outcome = Self::pt2_translate_outcome(round.1);
+            sum_of_rounds += Self::pt2_evaluate_round(Self::translate_opponent(round.0), outcome)
+        }
+        sum_of_rounds
+    }
 }
 
 #[cfg(test)]
@@ -105,4 +139,9 @@ C Z";
         assert_eq!(day02.part1(), 15);
     }
 
+    #[test]
+    fn part2_sample_results_in_12() {
+        let day02 = Day02::new(SAMPLE_ROUNDS.lines());
+        assert_eq!(day02.part2(), 12);
+    }
 }
