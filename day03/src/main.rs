@@ -9,9 +9,9 @@ fn main(){
     match file_content {
         Ok(linestring) => {
             {
-                let day03: Day03 = Day03::new(linestring.lines());
-                println!("part1: {}", day03.part1());
-                //println!("part2: {}", day02.part2());
+                let day = Day03::new(linestring.lines());
+                println!("part1: {}", day.part1());
+                println!("part2: {}", day.part2());
             }            
         },
         Err(e) => {
