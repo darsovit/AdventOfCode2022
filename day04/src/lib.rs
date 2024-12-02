@@ -21,9 +21,33 @@ impl<'a> Day04<'a> {
         (big.0 <= small.0) && (big.1 >= small.1)
     }
 
+    fn get_pair_ranges(range_pair: &str) -> ((u32, u32), (u32, u32)) {
+        let mut range_iter = range_pair.split(',');
+        match (range_iter.next(), range_iter.next()) {
+            (Some(left), Some(right)) => {
+                let left_range = Self::parse_range(left);
+                let right_range = Self::parse_range(right);
+                (left_range, right_range)
+            },
+            _ => { panic!("Broken line in {range_pair}"); }
+        }
+    }
+    
+    fn determine_if_full_overlap(left: (u32, u32), right: (u32, u32)) -> bool {
+        match (Self::range_contains(left, right), Self::range_contains(right, left)) {
+            (true, _) => true,
+            (false, true) => true,
+            (false, false) => false
+        }
+    }
     pub fn part1(&self) -> u32 {
         let mut sum_of_values = 0;
         for elf_pair in &self.elf_pairs {
+            let (left, right) = Self::get_pair_ranges(elf_pair);
+            if Self::determine_if_full_overlap(left, right) {
+                sum_of_values += 1;
+            }
+            /*
             let mut elf_iter = elf_pair.split(',');
             match (elf_iter.next(), elf_iter.next()) {
                 (Some(left), Some(right)) => {
@@ -38,6 +62,7 @@ impl<'a> Day04<'a> {
                 },
                 _ => { panic!("Broken line in {elf_pair}"); }
             }
+            */
         }
         sum_of_values
     }
