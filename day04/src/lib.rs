@@ -47,22 +47,30 @@ impl<'a> Day04<'a> {
             if Self::determine_if_full_overlap(left, right) {
                 sum_of_values += 1;
             }
-            /*
-            let mut elf_iter = elf_pair.split(',');
-            match (elf_iter.next(), elf_iter.next()) {
-                (Some(left), Some(right)) => {
-                    let left_range = Self::parse_range(left);
-                    let right_range = Self::parse_range(right);
+        }
+        sum_of_values
+    }
 
-                    match (Self::range_contains(left_range, right_range), Self::range_contains(right_range, left_range)) {
-                        (true, _) => { sum_of_values += 1; },
-                        (false, true) => { sum_of_values += 1; },
-                        (false, false) => {}
-                    }
-                },
-                _ => { panic!("Broken line in {elf_pair}"); }
+    fn determine_partial_overlap(left: (u32, u32), right: (u32, u32)) -> bool {
+        if left.0 <= right.0 && left.1 >= right.0 {
+            true
+        } else if left.0 <= right.1 && left.1 >= right.1 {
+            true
+        } else if Self::determine_if_full_overlap(left, right) {
+            true
+        } else {
+            println!("left: {:?}, right: {:?}", left, right);
+            false
+        }
+    }
+
+    pub fn part2(&self) -> u32 {
+        let mut sum_of_values = 0;
+        for elf_pair in &self.elf_pairs {
+            let (left, right) = Self::get_pair_ranges(elf_pair);
+            if Self::determine_partial_overlap(left, right) {
+                sum_of_values += 1;
             }
-            */
         }
         sum_of_values
     }
@@ -83,5 +91,11 @@ mod tests {
     fn part1_sample_results_in_2() {
         let day = Day04::new(SAMPLE_INPUT.lines());
         assert_eq!(2, day.part1());
+    }
+
+    #[test]
+    fn part2_sample_results_in_4() {
+        let day = Day04::new(SAMPLE_INPUT.lines());
+        assert_eq!(4, day.part2());
     }
 }

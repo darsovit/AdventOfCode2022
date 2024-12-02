@@ -11,7 +11,7 @@ fn main(){
             {
                 let day = Day04::new(linestring.lines());
                 println!("part1: {}", day.part1());
-                //println!("part2: {}", day.part2());
+                println!("part2: {}", day.part2());
             }            
         },
         Err(e) => {
